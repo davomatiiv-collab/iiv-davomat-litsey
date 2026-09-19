@@ -207,7 +207,8 @@ function leadersPage(){return `<div class="head"><h1>Guruh rahbarlari</h1><butto
     let roster = window.__iivGroupRoster || JSON.parse(storage.getItem('iivGroupRoster') || '{}');
     const allNames = [...new Set(Object.values(roster).flat())];
     const daily = Object.assign({}, JSON.parse(storage.getItem('iivAttendanceByDate') || '{}'), JSON.parse(storage.getItem('iivDailyArrived') || '{}'), window.__iivAttendanceByDate || {});
-    const arrived = allNames.filter((name) => daily[`${dayKey}|${name}`] === 'PRESENT').length;
+    const arrivedFromDaily = [...new Set(Object.entries(daily).filter(([key, value]) => key.startsWith(`${dayKey}|`) && value === 'PRESENT').map(([key]) => key.slice(dayKey.length + 1)))];
+    const arrived = Math.max(allNames.filter((name) => daily[`${dayKey}|${name}`] === 'PRESENT').length, arrivedFromDaily.length);
     const total = allNames.length || 0;
     if (number) {
       const totalCard = doc.querySelectorAll('.kpi')[0];
